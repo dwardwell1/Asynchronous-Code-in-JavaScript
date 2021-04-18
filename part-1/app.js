@@ -1,18 +1,23 @@
 //1
 let baseURL = 'http://numbersapi.com/';
 
-axios.get(`${baseURL}33/?json`).then((p1) => {
-	console.log(p1.data);
-});
-
-//2
-axios.get(`${baseURL}11..14,22/?json`).then((p1) => {
-	console.log(p1.data);
-});
-
-//3
-let fourFacts = [];
-for (let i = 1; i < 5; i++) {
-	fourFacts.push(axios.get(`${baseURL}69/?json`));
+async function favNum() {
+	let fact = await $.getJSON(`${baseURL}9/?json`);
+	console.log(fact.text);
 }
-Promise.all(fourFacts).then((numArr) => numArr.forEach((fact) => $('body').append(`<p>${fact.data.text}</p>`)));
+//2
+async function multFav() {
+	let nums = await axios.get(`${baseURL}11..14,22/?json`);
+	console.log(nums.data);
+}
+
+// //3
+
+async function onPage() {
+	let fourfacts = await Promise.all([
+		$.getJSON(`${baseURL}21/?json`),
+		$.getJSON(`${baseURL}21/?json`),
+		$.getJSON(`${baseURL}21/?json`)
+	]);
+	fourfacts.forEach((data) => $('body').append(`<p>${data.text}</p>`));
+}

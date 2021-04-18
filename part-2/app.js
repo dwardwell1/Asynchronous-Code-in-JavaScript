@@ -1,36 +1,45 @@
 let api_url = 'https://deckofcardsapi.com/api/deck/';
 //1
-$.getJSON(`${api_url}/new/draw`).then((data) => console.log(`${data.cards[0].value} of ${data.cards[0].suit}`));
+
+async function drawCard() {
+	card = await $.getJSON(`${api_url}/new/draw`);
+	console.log(`${card.cards[0].value} of ${card.cards[0].suit}`);
+}
+drawCard();
 
 //2
-$.getJSON(`${api_url}/new/draw`)
-	.then((data) => {
-		let id = data.deck_id;
-		console.log(`${data.cards[0].value} of ${data.cards[0].suit}`);
-		return $.getJSON(`${api_url}/${id}/draw`);
-	})
-	.then((data) => console.log(`${data.cards[0].value} of ${data.cards[0].suit}`));
+async function drawTwo() {
+	cardOne = await $.getJSON(`${api_url}/new/draw`);
+	id = cardOne.deck_id;
+	cardTwo = await $.getJSON(`${api_url}/${id}/draw`);
+	console.log(
+		`${cardOne.cards[0].value} of ${cardOne.cards[0].suit} and the ${cardTwo.cards[0].value} of ${cardTwo.cards[0]
+			.suit} `
+	);
+}
 
-//3
+drawTwo();
+
+// //3
 let deckID = null;
 let $btn = $('button');
 let $cardArea = $('#card-area');
 
-$.getJSON(`${api_url}/new/shuffle/`).then((data) => {
-	console.log(data.deck_id);
-	deckID = data.deck_id;
-	$btn.show();
-});
+async function draw52() {
+	let deck = await $.getJSON(`${api_url}/new/shuffle/`);
 
-$btn.on('click', function() {
-	$.getJSON(`${api_url}/${deckID}/draw`).then((data) => {
-		console.log(data);
-		let img = data.cards[0].image;
-		$cardArea.append(
-			$('<img>', {
-				src: img
-			})
-		);
-		if (data.remaining === 0) $btn.remove();
-	});
+	deckID = deck.deck_id;
+	$btn.show();
+}
+draw52();
+
+$btn.on('click', async function() {
+	let card = await $.getJSON(`${api_url}/${deckID}/draw`);
+	let img = card.cards[0].image;
+	$cardArea.append(
+		$('<img>', {
+			src: img
+		})
+	);
+	if (card.remaining === 0) $btn.remove();
 });
